@@ -1,6 +1,7 @@
 // Importation d'express
 const express = require('express');
 
+const userRoutes = require('./routes/user');
 // Importation + paramètrage Mongoose
 const mongoose = require('mongoose');
 
@@ -18,7 +19,7 @@ const app = express();
 // Interseption de toutes les reqûetes JSON
 app.use(express.json());
 
-// Middlewares
+//--------------------------------------Middlewares-------------------------------
 
 // Autorisations CORS
 app.use((req, res, next) => {
@@ -30,5 +31,8 @@ app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 	next();
 });
+
+// Enregistrement du routeur d'authentification
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
