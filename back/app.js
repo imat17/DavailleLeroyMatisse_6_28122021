@@ -5,9 +5,22 @@ const userRoutes = require('./routes/user');
 // Importation + paramètrage Mongoose
 const mongoose = require('mongoose');
 
+// Importation du router
+const SauceRoutes = require('./routes/stuff');
+
+// Importation CORS
+const cors = require('cors');
+
+
+// Connection à MongoDB
+
+require('dotenv').config();
+
+// console.log(process.env.mongoConnect);
+
 mongoose
 	.connect(
-		'mongodb+srv://imat17:vicecity123@cluster0.5alvs.mongodb.net/cluster0?retryWrites=true&w=majority',
+		`${process.env.mongoConnect}`,
 		{ useNewUrlParser: true, useUnifiedTopology: true }
 	)
 	.then(() => console.log('Connexion à MongoDB réussie !'))
@@ -32,7 +45,12 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.use(cors());
+
 // Enregistrement du routeur d'authentification
 app.use('/api/auth', userRoutes);
+
+// Importation des routes
+app.use('api/stuff', SauceRoutes);
 
 module.exports = app;
