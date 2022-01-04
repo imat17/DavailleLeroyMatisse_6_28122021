@@ -19,6 +19,6 @@ router.get('/:id', auth, controllerStuff.getOneSauce);
 
 router.delete('/:id', auth, controllerStuff.deleteSauce);
 
-router.put('/:id', auth, controllerStuff.modifySauce);
+router.put('/:id', auth, multer, controllerStuff.modifySauce);
 
 module.exports = router;

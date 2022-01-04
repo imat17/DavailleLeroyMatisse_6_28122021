@@ -11,16 +11,15 @@ const SauceRoutes = require('./routes/stuff');
 // Importation CORS
 const cors = require('cors');
 
+// Importation Path
+const path = require('path');
 
 // Connection à MongoDB
 
 require('dotenv').config();
 
 mongoose
-	.connect(
-		`${process.env.mongoConnect}`,
-		{ useNewUrlParser: true, useUnifiedTopology: true }
-	)
+	.connect(`${process.env.mongoConnect}`, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => console.log('Connexion à MongoDB réussie !'))
 	.catch(() => console.log('Connexion à MongoDB échouée !'));
 
@@ -50,5 +49,8 @@ app.use('/api/auth', userRoutes);
 
 // Importation des routes
 app.use('/api/sauces', SauceRoutes);
+
+// Gestionnaire de routage path
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
