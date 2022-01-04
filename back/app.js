@@ -16,8 +16,6 @@ const cors = require('cors');
 
 require('dotenv').config();
 
-// console.log(process.env.mongoConnect);
-
 mongoose
 	.connect(
 		`${process.env.mongoConnect}`,
@@ -51,6 +49,6 @@ app.use(cors());
 app.use('/api/auth', userRoutes);
 
 // Importation des routes
-app.use('api/stuff', SauceRoutes);
+app.use('/api/sauces', SauceRoutes);
 
 module.exports = app;
