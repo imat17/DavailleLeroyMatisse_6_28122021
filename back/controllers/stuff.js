@@ -57,3 +57,47 @@ exports.modifySauce = (req, res, next) => {
 		.then((sauce) => res.status(200).json({ message: 'La sauce à bien été modifiée' }))
 		.catch((error) => res.status(404).json({ error }));
 };
+
+exports.likedSauce = (req, res, next) => {
+	const likedSauceObject = req.body;
+	console.log(likedSauceObject);
+
+	let userId = req.body.userId;
+	let sauceId = req.params.id;
+	let liked = req.body.like;
+
+	switch (liked) {
+		case 1 :
+			Sauce.updateOne({ _id: sauceId }, { $push: { usersLiked: userId }, $inc: { likes: +1 }})
+			  .then(() => res.status(200).json({ message: 'Miam!' }))
+			  .catch((error) => res.status(400).json({ error }))
+				
+		  break;
+	
+		case 0 :
+			Sauce.findOne({ _id: sauceId })
+			   .then((sauce) => {
+				if (sauce.usersLiked.includes(userId)) { 
+				  Sauce.updateOne({ _id: sauceId }, { $pull: { usersLiked: userId }, $inc: { likes: -1 }})
+					.then(() => res.status(200).json({ message: 'Je préfère le poulet' }))
+					.catch((error) => res.status(400).json({ error }))
+				}
+				if (sauce.usersDisliked.includes(userId)) { 
+				  Sauce.updateOne({ _id: sauceId }, { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 }})
+					.then(() => res.status(200).json({ message: 'Je préfère le poulet' }))
+					.catch((error) => res.status(400).json({ error }))
+				}
+			  })
+			  .catch((error) => res.status(404).json({ error }))
+		  break;
+	
+		case -1 :
+			Sauce.updateOne({ _id: sauceId }, { $push: { usersDisliked: userId }, $inc: { dislikes: +1 }})
+			  .then(() => { res.status(200).json({ message: 'Beurk!' }) })
+			  .catch((error) => res.status(400).json({ error }))
+		  break;
+		  
+		  default:
+			console.log(error);
+	  }
+	}
