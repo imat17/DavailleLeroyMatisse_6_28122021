@@ -1,5 +1,8 @@
 const Sauce = require('../models/Sauce');
 
+// Importation du package file system
+const fileSystem = require('fs');
+
 // Stockage de toute la logique métier des routes
 
 exports.createSauce = (req, res, next) => {
@@ -28,21 +31,29 @@ exports.getOneSauce = (req, res, next) => {
 };
 
 exports.deleteSauce = (req, res, next) => {
-	Sauce.deleteOne({ _id: req.params.id })
-		.then((sauce) => res.status(200).json({ message: 'La sauce à bien été supprimée' }))
-		.catch((error) => res.status(404).json({ error }));
+	// On va chercher l'url de l'image pour avoir le nom
+	Sauce.findOne({ _id: req.params.id })
+		.then((sauce) => {
+			const fileName = sauce.imageUrl.split('/images/')[1];
+			// Suppression du fichier
+			fileSystem.unlink(`images/${fileName}`, () => {
+				Sauce.deleteOne({ _id: req.params.id })
+					.then((sauce) => res.status(200).json({ message: 'La sauce à bien été supprimée' }))
+					.catch((error) => res.status(404).json({ error }));
+			});
+		})
+		.catch((error) => res.status(500).json({ error }));
 };
 
 exports.modifySauce = (req, res, next) => {
-	const sauceObject = req.file ? 
-	// Si req.file existe ou pas
-	{ 
-		...JSON.parse(req.body.sauce),
-		imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-	} : { ...req.body };
-	Sauce.updateOne({ _id: req.params.id }, {...sauceObject, _id: req.params.id})
+	const sauceObject = req.file
+		? // Si req.file existe ou pas
+		  {
+				...JSON.parse(req.body.sauce),
+				imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+		  }
+		: { ...req.body };
+	Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
 		.then((sauce) => res.status(200).json({ message: 'La sauce à bien été modifiée' }))
 		.catch((error) => res.status(404).json({ error }));
 };
-
- 
