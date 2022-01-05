@@ -10,4 +10,4 @@ Pour lancer le projet :
 
 > Depuis le dossier front : Ecrire la commande "npm start"
 
-> Depuis le dossier back : Ecrire la commande "nodemon server"
+> Depuis le dossier back : Ecrire la commande "node server"
